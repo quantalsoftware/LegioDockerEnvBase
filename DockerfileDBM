@@ -1,0 +1,46 @@
+#
+#   Legio Investment Data Maintenance Container
+#
+
+# Use base adjust ubuntu image
+FROM ubuntu:latest
+
+MAINTAINER LegioInvestment <admin@legioinvestment.com>
+
+# Install OS Packages:
+# Misc tools for running Python and SQL inside a headless container.
+RUN apt-get update && apt-get install -y git unzip nano wget
+
+# Install miniconda and supported third party python packages
+RUN env TZ=UTC
+ENV PATH="/opt/miniconda3/bin:${PATH}"
+RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
+    bash Miniconda3-latest-Linux-x86_64.sh -b -p /opt/miniconda3 && \
+    rm -rf Miniconda3-latest-Linux-x86_64.sh && \
+    ln -s /opt/miniconda3/lib/libpython3.6m.so /usr/lib/libpython3.6m.so && \
+    conda update -y conda pip && \
+    conda install -y python=3.7.3 && \
+    conda install -y numpy=1.14.5 && \
+    conda install -y pandas=0.24.1 && \
+    conda install -y -c conda-forge rauth && \
+    conda install -c anaconda mysql-connector-python && \
+    conda install -c conda-forge fastparquet && \
+    conda install -c anaconda boto3 && \
+    conda install -c conda-forge awscli && \
+    conda clean -y --all && \
+    pip install schedule && \
+
+ADD credentials /
+ADD config /
+
+RUN mkdir ~/data && \
+    mkdir ~/.aws && \
+    pip install awscli && \
+    cp -a ./credentials ~/.aws/credentials &&\
+    cp -a ./config ~/.aws/config
+
+ADD BaseConfigInfo.csv /
+ADD DatabaseMaintenance.py /
+
+## Check, Build and Maintain SQL Database
+CMD ["python", "./DatabaseMaintenance.py"]

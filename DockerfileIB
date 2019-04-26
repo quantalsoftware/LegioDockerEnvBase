@@ -31,21 +31,21 @@ RUN wget https://github.com/ib-controller/ib-controller/releases/download/3.4.0/
         chmod a+x ~/ibcontroller.paper/*.sh ~/ibcontroller.paper/*/*.sh
 
 # Download Replacement Files
-RUN wget https://github.com/quantalsoftware/LegioContainerFiles/archive/master.zip && \
+RUN wget https://github.com/quantalsoftware/LegioDockerEnvIB/archive/master.zip && \
         unzip ./master.zip -d ~/ && \
-        chmod +x ~/LegioContainerFiles-master/UpdateIBControllerFiles.sh && \
-        ~/LegioContainerFiles-master/UpdateIBControllerFiles.sh $ibdetails && \               
+        chmod +x ~/LegioDockerEnvIB-master/UpdateIBControllerFiles.sh && \
+        ~/LegioDockerEnvIB-master/UpdateIBControllerFiles.sh $ibdetails && \               
         chmod a+x ~/ibcontroller.paper/*.sh ~/ibcontroller.paper/*/*.sh && \
         chmod a+x ~/ibcontroller.paper/Scripts/IBController.sh && \
         chmod a+x ~/ibcontroller.paper/Scripts/DisplayBannerAndLaunch.sh
 
 
 # Setup x11 screen simulator
-RUN chmod +x /root/LegioContainerFiles-master/setupVNC.sh
+RUN chmod +x /root/LegioDockerEnvIB-master/setupVNC.sh
 
 RUN mkdir /logs
 
 EXPOSE 5900
 EXPOSE 4002
 
-ENTRYPOINT ["/root/LegioContainerFiles-master/setupVNC.sh"]
+ENTRYPOINT ["/root/LegioDockerEnvIB-master/setupVNC.sh"]
