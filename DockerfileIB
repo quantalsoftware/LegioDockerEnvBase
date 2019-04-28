@@ -33,12 +33,14 @@ RUN wget https://github.com/ib-controller/ib-controller/releases/download/3.4.0/
 # Download Replacement Files
 RUN wget https://github.com/quantalsoftware/LegioDockerEnvIB/archive/master.zip && \
         unzip ./master.zip -d ~/ && \
-        chmod +x ~/LegioDockerEnvIB-master/UpdateIBControllerFiles.sh && \                      
-        chmod a+x ~/ibcontroller.paper/*.sh ~/ibcontroller.paper/*/*.sh && \
-        chmod a+x ~/ibcontroller.paper/Scripts/IBController.sh && \
-        chmod a+x ~/ibcontroller.paper/Scripts/DisplayBannerAndLaunch.sh
+        chmod +x ~/LegioDockerEnvIB-master/UpdateIBControllerFiles.sh
 
 RUN ~/LegioDockerEnvIB-master/UpdateIBControllerFiles.sh $ibdetails
+
+RUN chmod a+x ~/ibcontroller.paper/*.sh ~/ibcontroller.paper/*/*.sh && \
+        chmod a+x ~/ibcontroller.paper/IBControllerGatewayStart.sh && \
+        chmod a+x ~/ibcontroller.paper/Scripts/IBController.sh && \
+        chmod a+x ~/ibcontroller.paper/Scripts/DisplayBannerAndLaunch.sh
 
 # Setup x11 screen simulator
 RUN chmod +x /root/LegioDockerEnvIB-master/setupVNC.sh
