@@ -4,5 +4,5 @@ set -e
 echo "Load IB Docker"
 for i in 5050 5051
 do
-    sudo docker build -t legioib$i -f ./DockerfileIB --build-arg $i .
+    sudo docker build --build-arg $i -t legioib$i -f ./DockerfileIB .
 done

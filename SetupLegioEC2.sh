@@ -61,6 +61,6 @@ sudo docker network create --subnet=172.50.0.0/16 legionet
     echo "Load IB Docker"
     for i in 5050 5051 5052 5053 5054 5055 5056 5057 5058
     do
-        echo "sudo docker build -t legioib$i -f ./DockerfileIB $i ."
+        echo "sudo docker build --build-arg $1 -t legioib$i -f ./DockerfileIB $i ."
     done
     
