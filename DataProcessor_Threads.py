@@ -297,7 +297,8 @@ def HourlyProcess():
     if activeTrader:
         log_stage('hourly_proc_START_trader')
         try:  
-            new_obs = gen_inference_dset(inference_file_loc=modelParamsPath,feat_map=model_feat_map,norm_params=model_norm_params)        
+            new_obs = gen_inference_dset(inference_file_loc=modelParamsPath,feat_map=model_feat_map,norm_params=model_norm_params)
+            print(new_obs)       
             value = gen_new_pred(new_obs.values, model)
 
             last_price = hourData.tail(1)['C'].item()
@@ -676,17 +677,17 @@ def StoreMarketData():
         pickle.dump(positions, f)
     log_stage('store_market_data_END_pkl')
     try:
-        bucket.upload_file(localStorage+hourlyFilename, s3_StorageLocation+hourlyFilename)
-        bucket.upload_file(localStorage+minsFilename, s3_StorageLocation+minsFilename)
-        bucket.upload_file(localStorage+ticksFilename, s3_StorageLocation+ticksFilename)
-        bucket.upload_file(localStorage+singleTicksFilename, s3_StorageLocation+singleTicksFilename)
-        bucket.upload_file(localStorage+"OrdersAndPositions/"+ordersFilename, s3_StorageLocation+ordersFilename)
-        bucket.upload_file(localStorage+"OrdersAndPositions/"+positionsFilename, s3_StorageLocation+positionsFilename)
+        bucket.upload_file(localStorage+'hour/'+hourlyFilename, s3_StorageLocation+hourlyFilename)
+        bucket.upload_file(localStorage+'min/'+minsFilename, s3_StorageLocation+minsFilename)
+        bucket.upload_file(localStorage+'ticks/'+ticksFilename, s3_StorageLocation+ticksFilename)
+        bucket.upload_file(localStorage+'ticks/'+singleTicksFilename, s3_StorageLocation+singleTicksFilename)
+        bucket.upload_file(localStorage+"ordersandpositions/"+ordersFilename, s3_StorageLocation+ordersFilename)
+        bucket.upload_file(localStorage+"ordersandpositions/"+positionsFilename, s3_StorageLocation+positionsFilename)
 
-        os.remove(localStorage+hourlyFilename)
-        os.remove(localStorage+minsFilename)
-        os.remove(localStorage+ticksFilename)
-        os.remove(localStorage+singleTicksFilename)
+        os.remove(localStorage+'hour/'+hourlyFilename)
+        os.remove(localStorage+'min/'+minsFilename)
+        os.remove(localStorage+'ticks/'+ticksFilename)
+        os.remove(localStorage+'ticks/'+singleTicksFilename)
         hourData = []
         minuteData = []
         tickData = []
@@ -948,6 +949,7 @@ if __name__ == '__main__':
     baseConfigInfo = pd.read_csv("/BaseConfigInfo.csv")
     #baseConfigInfo = pd.read_csv("/general/legiotrader/DockerFiles/docker_env/LegioContainerFiles/BaseConfigInfo.csv")
     containerIP = socket.gethostbyname(socket.gethostname())
+    print(containerIP)
     #containerIP = "172.50.0.57"
     
     thisContainer = baseConfigInfo.loc[baseConfigInfo['IPAddress']==containerIP]

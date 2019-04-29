@@ -43,7 +43,7 @@ RUN wget https://github.com/blampe/IbPy/archive/master.zip &&\
     python setup.py install
 
 ADD model_export.zip /
-#ADD BaseConfigInfo.csv /
+ADD BaseConfigInfo.csv /
 
 # Setup operational environment
 RUN mkdir ~/data && \

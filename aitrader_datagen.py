@@ -59,7 +59,7 @@ def readin(db_location, symbol, inference=True, timeperiod= '60T'):
 
     if inference:
         query = f"SELECT DISTINCT * FROM {symbol}_Hour ORDER BY Timestamp DESC LIMIT 600;"
-        connect_timeout = 5
+        connect_timeout = 2
     else:
         query = f"SELECT DISTINCT * FROM {symbol}_Hour WHERE Timestamp >= '2014-01-01 00:00:00';"
         connect_timeout = 45
@@ -72,9 +72,10 @@ def readin(db_location, symbol, inference=True, timeperiod= '60T'):
     hours.columns = ["Timestamp","Open","High","Low","Close"]
     hours = hours.drop_duplicates(subset='Timestamp')
     hours['Timestamp'] = pd.to_datetime(hours['Timestamp'])
-    hours = hours.set_index('Timestamp').sort_index().resample('60T').nearest().astype(np.float32)
+    hours = hours.set_index('Timestamp').sort_index()
+    hours.index = hours.index.floor('1H')
+    hours = hours.astype(np.float32)
     
-
     query = f"SELECT DISTINCT Timestamp, Open, Close FROM {symbol}_Min WHERE Timestamp >= '{hours.index[0]}';"
 
     mins = sql_read(dbHost, dbPort, user, passwd, symbol, connect_timeout, query)
@@ -89,17 +90,17 @@ def readin(db_location, symbol, inference=True, timeperiod= '60T'):
     mins['Timestamp'] = pd.to_datetime(mins['Timestamp'])
     mins = mins.set_index('Timestamp').astype(np.float32).mean(axis=1).resample('60T').agg(['median', 'mean', 'std']).rename(columns=aggnames)
 
-    temp = hours.loc[mins.index].merge(mins, left_index=True, right_index=True, how='inner').astype(np.float32).tz_localize('UTC')
-
-    if inference:
-        if temp.last('1D').isnull().sum().sum()>0:
-            raise ValueError('NaN encountered in observation')
-            """
-            Logging code here
-            """
-            #return None
-    if not inference:
-        print(temp.shape)
+    temp = hours.merge(mins, left_index=True, right_index=True, how='inner').astype(np.float32).tz_localize('UTC')
+    temp.interpolate(method= 'time', inplace=True)
+#     if inference:
+#         if temp.last('1D').isnull().sum().sum()>0:
+#             raise ValueError('NaN encountered in observation')
+#             """
+#             Logging code here
+#             """
+#             #return None
+#     if not inference:
+#         print(temp.shape)
     
     return temp
 

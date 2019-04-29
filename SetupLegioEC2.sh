@@ -62,5 +62,6 @@ then
     do
         sudo docker build --build-arg ibdetails=$i -t legioib$i -f ./DockerfileIB .
     done
+    sudo docker build -t legiodp -f ./DockerfileDP .
 fi  
     
