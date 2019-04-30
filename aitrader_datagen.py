@@ -59,7 +59,7 @@ def readin(db_location, symbol, inference=True, timeperiod= '60T'):
 
     if inference:
         query = f"SELECT DISTINCT * FROM {symbol}_Hour ORDER BY Timestamp DESC LIMIT 600;"
-        connect_timeout = 2
+        connect_timeout = 5
     else:
         query = f"SELECT DISTINCT * FROM {symbol}_Hour WHERE Timestamp >= '2014-01-01 00:00:00';"
         connect_timeout = 45
