@@ -15,7 +15,7 @@ cd LegioDockerEnvBase-master
 outputFile="BaseConfigInfo.csv"
 awsFile="BaseConfigInfo.csv"
 bucket="legio-data"
-bucket="legio-test"
+#bucket="legio-test"
 resource="/${bucket}/${awsFile}"
 contentType="text/csv"
 # Change the content type as desired
@@ -45,23 +45,15 @@ EOL
 
 sudo docker network create --subnet=172.50.0.0/16 legionet
 
-if [ $3 = "SQL" ]
-then
-    ## SQL
-    echo "Load SQL Docker"    
-    sudo docker build -t legiosql -f ./DockerfileSQL .
-    sudo docker run -i -t --name legioSQL --net legionet --ip 172.50.0.20 -d -p 31330:3306 -p 31425:8080 legiosql
-    sudo docker exec -it legioSQL mysql -uroot -proot -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'root' WITH GRANT OPTION; FLUSH PRIVILEGES;"
-fi
+## SQL
+echo "Load SQL Docker"    
+sudo docker build -t legiosql -f ./DockerfileSQL .
+sudo docker run -i -t --name legioSQL --net legionet --ip 172.50.0.20 -d -p 31330:3306 -p 31425:8080 legiosql
+sudo docker exec -it legioSQL mysql -uroot -proot -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'root' WITH GRANT OPTION; FLUSH PRIVILEGES;"
 
-
-if [ $3 = "IB" ]
-then
-    echo "Build IB Container"
-    for i in 5050 5051 5052 5053 5054 5055 5056 5057 5058
-    do
-        sudo docker build --build-arg ibdetails=$i -t legioib$i -f ./DockerfileIB .
-    done
-    sudo docker build -t legiodp -f ./DockerfileDP .
-fi  
-    
+echo "Build IB Container"
+for i in 5050 5051 5052 5053 5054 5055 5056 5057 5058
+do
+    sudo docker build --build-arg ibdetails=$i -t legioib$i -f ./DockerfileIB .
+done
+sudo docker build -t legiodp -f ./DockerfileDP .

@@ -10,7 +10,7 @@ import schedule
 import pandas as pd
 import numpy as np
 import mysql.connector as mysql
-from fastparquet import ParquetFile, write
+#from fastparquet import ParquetFile, write
 import pickle
 import boto3
 import logging
